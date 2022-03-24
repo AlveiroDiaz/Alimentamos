@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -48,7 +50,7 @@ public class Conexion {
             
             String ruta = "jdbc:postgresql://localhost/"+bd;
             conexion = DriverManager.getConnection(ruta, usuario, clave);
-            JOptionPane.showMessageDialog(null, "Conexión exitosa...");
+          //  JOptionPane.showMessageDialog(null, "Conexión exitosa...");
         } catch (SQLException ex) {
             System.out.println(ex);
             JOptionPane.showMessageDialog(null, "No se puede conectar con PGSQL...");
@@ -92,4 +94,65 @@ public class Conexion {
         }
         return conductor;
     }
+    
+    
+    public Cliente login(String nombre, String pass){
+        
+        String resultado = null;
+        Cliente cli = null;
+        try {
+            String busqueda = "Select * from usuario where usuario='" + nombre + "' and contrasena='" + pass + "'";
+            stmtC = conexion.createStatement();
+            ResultSet rsC = stmtC.executeQuery(busqueda);
+
+            if (rsC.next()) {
+                if (rsC.getString("usuario").equals(nombre)) {
+                    resultado = rsC.getString("rol");
+                    busqueda = "Select * from cliente where identificacion="+rsC.getString("usuario");
+                    stmtC = conexion.createStatement();
+                    ResultSet rsC1 = stmtC.executeQuery(busqueda);
+                    if(rsC1.next()){
+                       cli = new Cliente (Integer.parseInt(rsC1.getString("identificacion")),
+                                                    rsC1.getString("nombre"),
+                                                    rsC1.getString("direccion"), 
+                                                    " ",
+                                                    rsC.getString("contrasena"), 
+                                                    rsC.getString("rol"),
+                                                    ciudad(rsC1.getString("id_ciudad")));
+                    }
+                    System.out.println("hola" + cli.toString());
+                    
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al ingresar los datos");
+            }
+
+        } catch (Exception e) {
+        }
+
+        return cli;
+    }
+
+    private String ciudad(String idCiudad) {
+        
+        String ciudad = " ";
+        try {
+            String busqueda = "Select * from ciudad where id=" + idCiudad ;
+            
+            stmtC = conexion.createStatement();
+            ResultSet rsC = stmtC.executeQuery(busqueda);
+            
+            if(rsC.next()){        
+                
+                return rsC.getString("nombre");
+                
+              }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return "";
+    }
+    
 }

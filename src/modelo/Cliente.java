@@ -9,16 +9,16 @@ package modelo;
  *
  * @author Al
  */
-class Cliente {
+public class Cliente {
     private int identificacion;
     private String nombre;
     private String direccion;
     private String telefono;
     private String contra;
-    private int rol;
+    private String rol;
     private String ciudad;
 
-    public Cliente(int identificacion, String nombre, String direccion, String telefono, String contra, int rol, String ciudad) {
+    public Cliente(int identificacion, String nombre, String direccion, String telefono, String contra, String rol, String ciudad) {
         this.identificacion = identificacion;
         this.nombre = nombre;
         this.direccion = direccion;
@@ -34,10 +34,18 @@ class Cliente {
         this.direccion = "";
         this.telefono = "";
         this.contra = "";
-        this.rol = 0;
+        this.rol = "";
         this.ciudad = "";
     }
 
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+    
     public int getIdentificacion() {
         return identificacion;
     }
@@ -78,13 +86,6 @@ class Cliente {
         this.contra = contra;
     }
 
-    public int getRol() {
-        return rol;
-    }
-
-    public void setRol(int rol) {
-        this.rol = rol;
-    }
 
     public String getCiudad() {
         return ciudad;
@@ -93,5 +94,12 @@ class Cliente {
     public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
     }
+
+    @Override
+    public String toString() {
+        return "Cliente{" + "identificacion=" + identificacion + ", nombre=" + nombre + ", direccion=" + direccion + ", telefono=" + telefono + ", contra=" + contra + ", rol=" + rol + ", ciudad=" + ciudad + '}';
+    }
+    
+    
     
 }

@@ -28,26 +28,64 @@ public class Controlador implements ActionListener {
     FramePrincipal vPrincipal;
     VentanaAddRuta vAddRuta;
     AgregarPiloto vAddPiloto;
+    ventanaAddCiudad vAddCiudad;
+    login vLogin;
+    VentanaAddProveedor vAddProveedor;
+    ventanaCliente vCliente;
     Conexion conn;
+    Cliente cliente = null;
 
     public Controlador() {
         this.vPrincipal = new FramePrincipal();
         this.vAddRuta = new VentanaAddRuta();
         this.vAddPiloto = new AgregarPiloto();
+        this.vAddCiudad = new ventanaAddCiudad();
         this.conn = new Conexion();
+        this.vLogin = new login();
+        this.vCliente = new ventanaCliente();
     }
 
     public void iniciar() {
         vPrincipal.getAddRuta().addActionListener(this);
         vPrincipal.getAddPilot().addActionListener(this);
+        vLogin.getBtnLogin().addActionListener(this);
+        vLogin.getBtnRegistrarU().addActionListener(this);
         vAddRuta.getComboBox().addActionListener(this);
         vAddRuta.getBotonAddRuta().addActionListener(this);
         vAddPiloto.getBotonAddPiloto().addActionListener(this);
-        vPrincipal.setVisible(true);
+        vCliente.getBtnConsultarPedido().setVisible(false);
+        vCliente.getBtnGenPedido().setVisible(false);
+        vCliente.setVisible(true);
+        abrirVentana(vLogin);
+                
     }
+       
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        
+        
+        
+        if(e.getSource() == vLogin.getBtnLogin()){
+            conn.conectar();
+            cliente = conn.login(vLogin.getTxtUsuario().getText(), vLogin.getTxtPass().getText());
+            
+            if(cliente.getRol() != null){
+                if(cliente.getRol().equals("admin")){
+                vCliente.setVisible(false);
+                vPrincipal.setVisible(true);
+                vLogin.setVisible(false);
+            }else{
+                if(cliente.getRol().equals("cliente")){
+                    vLogin.setVisible(false);
+                    vCliente.getBtnConsultarPedido().setVisible(true);
+                    vCliente.getBtnGenPedido().setVisible(true);
+                }
+                }
+            }
+            
+            
+        }
 
         if (e.getSource() == vPrincipal.getAddRuta()) {
             vAddRuta.getjTextArea1().setText("");
@@ -123,9 +161,12 @@ public class Controlador implements ActionListener {
             vAddRuta.setVisible(false);
             vAddPiloto.setVisible(false);
             vPrincipal.getjDesktopPane1().add(frm);
+            vCliente.getjDesktopPane1().add(frm);
         } catch (Exception e) {
             vPrincipal.getjDesktopPane1().remove(frm);
             vPrincipal.getjDesktopPane1().add(frm);
+            vCliente.getjDesktopPane1().add(frm);
+            vCliente.getjDesktopPane1().remove(frm);
         }
         frm.setVisible(true);
     }
